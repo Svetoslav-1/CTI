@@ -1,0 +1,20 @@
+type,value,context,confidence,defanged
+domain,bulgaria-isplashanie[.]me,"Primary phishing host; impersonates BG state energy-compensation portal",high,yes
+url_pattern,/receive/{numeric_id}?a={amount}&d={deadline}&h={hours},"Lure URL schema; amount/deadline/review-hours are server-read params",high,n/a
+url_sample,hxxps://bulgaria-isplashanie[.]me/receive/4920130?a=150&d=31.12.2026&h=24,"Observed sample (energy-compensation theme, 150 EUR)",high,yes
+asset_js,/server/captcha-v2/index-no-ru-6499928a-250ms.js,"Kit module; 'no-ru' = geo-cloaking token excluding RU visitors",high,n/a
+asset_css,/server/captcha-v2/index-H51BxVaW.css,"Kit stylesheet",high,n/a
+cookie,uid,"Persistent victim identifier",high,n/a
+cookie,unqid,"Randomized per load via anusX() crypto RNG",high,n/a
+cookie,captcha,"Set to kit token after fake-captcha gate",high,n/a
+cookie,1a33eed4272a1bc11724183d35b4376e,"Dynamic hash cookie name; value __792080be6d6c27fb98d1efcbdab7cd1c",medium,n/a
+token,54bc571b814855a83136e0c57601d9c5,"CAPTCHA_AUTH.token / serverData.token",medium,n/a
+hash,f23b3e0e8ed58df29aff75e217e6c7ec,"CAPTCHA_AUTH.uidHash (also observed as uid value)",medium,n/a
+js_fingerprint,anusX,"Distinctive RNG function name in JS challenge stage",high,n/a
+js_fingerprint,captchaPassedPost,"Fake-captcha auto-submit function (fires ~823ms)",high,n/a
+js_fingerprint,shadow-page-data,"Script id holding base64 shadow-DOM lure payload",high,n/a
+js_fingerprint,no-ru,"Filename token indicating RU geo-exclusion cloaking",high,n/a
+endpoint,POST /receive/{id} type=support&uniq={n},"Live support-chat / operator social-engineering channel",high,n/a
+hosting,Cloudflare,"Reverse proxy / CDN front; observed colo SOF (Sofia)",high,n/a
+payload_fields,"card number, expiry, CVC, cardholder name","Card-harvest modal 'Добавете банкова карта' (fake PCI DSS reassurance)",high,n/a
+targeting,"ES, GB, RO (+ schema implies more)","Multi-country bank-picker config; logos scraped from play-lh.googleusercontent.com",high,n/a
