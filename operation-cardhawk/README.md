@@ -157,4 +157,3 @@ Full machine-readable set in [`iocs.csv`](./iocs.csv). Highlights (defanged):
 ## Files
 - `README.md` — this teardown
 - `iocs.csv` — machine-readable IOC set (defanged)
-- `decoded-shadow-page.html` — decoded shadow-DOM lure (partial, as captured)
