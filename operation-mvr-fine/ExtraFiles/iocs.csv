@@ -1,0 +1,61 @@
+type,value,context,first_seen,source
+domain,mvrx[.]lat,Primary phishing host (Darcula/Magic Cat MVR kit),2026-05-08,manual
+domain,mvro[.]lat,MVR phishing kit (same IP as mvrx),2026-05-14,manual
+domain,mvrbg[.]ink,MVR phishing kit,2026-05-06,urlscan
+domain,mvrbg[.]cyou,MVR phishing kit,2026-05-08,urlscan
+domain,mvrbg[.]sbs,MVR phishing kit,2026-05-08,urlscan
+domain,mvr-bg[.]sbs,MVR phishing kit,2026-05-08,urlscan
+domain,mvr-bg[.]shop,MVR phishing kit,2026-05-08,urlscan
+domain,mvr-bg[.]autos,MVR phishing kit,2026-05-08,urlscan
+domain,mvrbg[.]life,MVR phishing kit,2026-05-08,urlscan
+domain,gav[.]mvrbg[.]cam,MVR phishing kit,2026-05-08,urlscan
+domain,mvr[.]bggov[.]cam,MVR phishing kit,2026-05-08,urlscan
+domain,mvr[.]govbg[.]one,MVR phishing kit,2026-05-08,urlscan
+ip,43.153.72.244,Tencent Cloud AS132203 - hosts mvrx[.]lat and mvro[.]lat,2026-05-08,dig
+ip,43.160.221.174,Tencent Cloud - hosts mvrbg[.]cyou mvrbg[.]sbs mvr-bg[.]autos,2026-05-08,urlscan
+ip,43.165.0.190,Tencent Cloud - hosts mvr-bg[.]sbs mvr-bg[.]shop,2026-05-08,urlscan
+ip,43.160.250.19,Tencent Cloud - hosts mvr[.]bggov[.]cam mvr[.]govbg[.]one,2026-05-08,urlscan
+ip,47.245.142.76,Alibaba Cloud AS45102 - hosts mvrbg[.]ink mvrbg[.]life,2026-05-06,urlscan
+ip,47.91.88.57,Alibaba Cloud - hosts gav[.]mvrbg[.]cam,2026-05-08,urlscan
+asn,AS132203,Tencent Cloud - primary hosting,2026-05-08,whois
+asn,AS45102,Alibaba Cloud (Alibaba US Technology Co. CN) - secondary hosting,2026-05-06,whois
+url,hxxps://[domain]/bg/#/index,Entry point (hash-routed Vue SPA),2026-05-08,manual
+url,hxxps://[domain]/bg/static/D8qkvwBg.js,App bundle 361KB,2026-05-08,manual
+url,hxxps://[domain]/bg/static/BVwPKGM5.js,Vendor bundle 308KB,2026-05-08,manual
+url,hxxps://[domain]/bg/static/DdSK5oDi.css,Stylesheet,2026-05-08,manual
+url_pattern,wss://[domain]/console/?uuid={UUID}&EIO=4&transport=websocket,Socket.IO C2 channel,2026-05-08,manual
+registrar,Dynadot LLC,Registrar for mvrx[.]lat and mvro[.]lat (abuse@dynadot.com),2026-05-08,whois
+registrar,GoDaddy.com LLC,Registrar for other kit domains (abuse@godaddy.com),2026-05-08,whois
+nameserver,ns1[.]dyna-ns[.]net,Dynadot DNS,2026-05-08,whois
+nameserver,ns2[.]dyna-ns[.]net,Dynadot DNS,2026-05-08,whois
+tls_issuer,Let's Encrypt R12,Auto-provisioned cert for mvrx[.]lat,2026-05-08,openssl
+tls_issuer,Let's Encrypt R13,Auto-provisioned cert for mvrbg[.]ink,2026-05-06,urlscan
+js_fingerprint,D8qkvwBg.js,Unique app bundle filename across all 12 domains,2026-05-08,manual
+js_fingerprint,BVwPKGM5.js,Vendor bundle filename,2026-05-08,manual
+js_fingerprint,changleField,Typo for changeField - unique kit signature (Chinese-English transliteration),2026-05-08,manual
+js_fingerprint,isSpider,Bot-detection flag via FingerprintJS $o class,2026-05-08,manual
+js_fingerprint,Gi{},Kit configuration object (brand/currency/amount/fields),2026-05-08,manual
+js_fingerprint,cc(),Page-tracker function (Chinese page labels),2026-05-08,manual
+js_fingerprint,Ee(),WebSocket encrypt function,2026-05-08,manual
+js_fingerprint,ze()/oe()/Ko(),Obfuscation lookup arrays,2026-05-08,manual
+js_fingerprint,Se()/ie()/Oo(),String-decoder functions (offsets 141/398/404),2026-05-08,manual
+magic_number,877836,Obfuscation shuffle target (ze array),2026-05-08,manual
+magic_number,958605,Obfuscation shuffle target (oe array),2026-05-08,manual
+magic_number,133821,Obfuscation shuffle target (Ko array),2026-05-08,manual
+socketio_config,pingInterval=1000;pingTimeout=3000,Aggressive keepalive for live operator monitoring,2026-05-08,manual
+external_dependency,m1[.]openfpcdn[.]io,FingerprintJS BotD CDN (legitimate; used by kit for bot detection + dev telemetry),2026-05-08,manual
+crypto_key,ZQMWLSPXJRDHKTNV,AES-128-CBC key 1 (WebSocket) - static across all builds,2026-05-08,manual
+crypto_iv,YFBCUENAGPQLXJWR,AES-128-CBC IV 1 (WebSocket),2026-05-08,manual
+crypto_key,PABGJJPIFELIOJMD,AES-128-CBC key 2 (secondary) - static across all builds,2026-05-08,manual
+crypto_iv,HOPNMFQOBCAAGKBN,AES-128-CBC IV 2 (secondary),2026-05-08,manual
+tracking_hash,64-byte hex in meta name=keywords,Per-victim tracking ID tying SMS link to session,2026-05-08,manual
+ws_event,changleField,Client->Server page-navigation/field-change event,2026-05-08,manual
+ws_event,notice:submitData,Client->Server card-data submission,2026-05-08,manual
+ws_event,notice:submitCode,Client->Server 3DS/OTP code submission,2026-05-08,manual
+ws_status,waitVerificationPhoneCode,Server->Client command - show SMS code page (3DS relay),2026-05-08,manual
+ws_status,waitVerificationExpressCvv,Server->Client command - show CVV re-entry,2026-05-08,manual
+ws_status,waitVerificationCustomCode,Server->Client command - show custom code page,2026-05-08,manual
+ws_status,waitVerificationEmail,Server->Client command - show email code page,2026-05-08,manual
+post_endpoint,api/Users/Login,Present in cloned UI markup; not confirmed active server-side,2026-05-08,manual
+toolkit,Darcula / Magic Cat,Chinese PhaaS platform family (documented by Mnemonic/NRK),2026-05-08,manual
+backend,Ubuntu 24 / Docker / Node.js / nginx,Backend stack hosting operator dashboard + Socket.IO,2026-05-08,manual

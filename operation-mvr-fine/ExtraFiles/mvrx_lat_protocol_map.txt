@@ -1,0 +1,140 @@
+# mvrx.lat Phishing Kit — Full Protocol Map
+# Reverse-engineered from D8qkvwBg.js (361 KB) and BVwPKGM5.js (308 KB)
+# Date: 2026-05-08
+
+## ENCRYPTION
+  Algorithm:    AES-128-CBC, PKCS7 padding (CryptoJS library)
+  Keys are STATIC — hardcoded in JS, same for all victims/sessions.
+  
+  Key Pair 1 (WebSocket communication — encrypt/decrypt):
+    AES Key: ZQMWLSPXJRDHKTNV
+    AES IV:  YFBCUENAGPQLXJWR
+
+  Key Pair 2 (secondary layer):
+    AES Key: PABGJJPIFELIOJMD
+    AES IV:  HOPNMFQOBCAAGKBN
+
+## TRANSPORT
+  Protocol:     Socket.IO (Engine.IO v4)
+  Endpoint:     wss://mvrx.lat/console/?uuid=[UUID]&EIO=4&transport=websocket
+  Ping:         1000ms interval, 3000ms timeout (aggressive — real-time monitoring)
+  Message fmt:  42["message","<base64-encoded AES ciphertext>"]
+  Handshake:    0{"sid":"...","upgrades":[],"pingInterval":1000,"pingTimeout":3000}
+
+## PAGES / ROUTES (Vue.js SPA)
+  Index            /index           — Начална: въвеждане на рег. номер на МПС
+  Result           (dynamic)        — Фалшиво нарушение за превишена скорост
+  Info             (dynamic)        — Лична информация (идентификация на титуляр)
+  Payment          (dynamic)        — Форма за банкова карта
+  PhoneCode        /phoneCode       — SMS верификационен код (3D Secure имитация)
+  PinCode          (dynamic)        — PIN код
+  ExpressCvvCode   /expressCvv      — CVV повторно въвеждане
+  EmailCode        /emailCode       — Email верификационен код
+  AppCode          /app             — Банково приложение потвърждение
+  CustomCode       (dynamic)        — Допълнителен код по заявка на оператора
+  Success          (dynamic)        — "Успешно плащане" (финален екран)
+  Loading          (dynamic)        — Индикатор за изчакване
+
+## CLIENT → SERVER EVENTS (Ee() function)
+
+  Event: "changleField"  (typo is a kit signature)
+    Triggers:     On every page navigation and form field change
+    Data:         { router: "<Chinese page name>" }
+                  { status: "confirmedApp" }
+                  { status: "notReceivedApp" }
+                  { status: "<sendCode>" }
+    Purpose:      Real-time tracking of victim progress for operator dashboard
+
+  Event: "notice"
+    Data values:  "submitData"          — Victim submitted card data
+                  "submitCode"          — Victim submitted verification code
+                  "resendCode"          — Victim requested code resend
+                  "enterAccount"        — Victim entered account details
+                  "enter<cardNumber>"   — Victim typed card number
+                  "enter<phoneCode>"    — Victim entered phone code
+    Purpose:      Notifies operator of victim actions
+
+  Event: "submitData"
+    Data:         Full mc{} object (see EXFILTRATED DATA below)
+    Purpose:      Sends stolen card data to server
+
+  Event: "submitCode"
+    Data:         Verification code entered by victim
+    Purpose:      Forwards 3DS/OTP code to operator for real-time relay
+
+## SERVER → CLIENT EVENTS (message handler)
+
+  Event: "config" / "userSiteConfig"
+    Purpose:      Initial page configuration, branding, text strings
+    Data:         Full site config including Bulgarian text, fine amounts, etc.
+
+  Event: "message" (decrypted)
+    Status values that trigger page transitions:
+      "waitVerificationPhoneCode"     → Navigate to PhoneCode (SMS code entry)
+      "waitVerificationExpressCvv"    → Navigate to ExpressCvv (re-enter CVV)
+      "waitVerificationCustomCode"    → Navigate to CustomCode (arbitrary code)
+      "waitVerificationEmail"         → Navigate to EmailCode (email code entry)
+      "complete" + "success"          → Navigate to Success page
+      "wait"                          → Show loading/waiting indicator
+      error status                    → Show card error message
+
+    The OPERATOR controls which page the victim sees next.
+    This enables real-time 3D Secure bypass:
+      1. Victim submits card → operator receives data
+      2. Operator initiates real transaction with stolen card
+      3. Bank sends 3DS SMS to victim's phone
+      4. Operator sends "waitVerificationPhoneCode" to victim's browser
+      5. Victim enters the real SMS code thinking it's for the fine
+      6. Operator receives code via "submitCode" event
+      7. Operator completes the real transaction
+
+## EXFILTRATED DATA (mc{} object)
+
+  mc.vehicleReg     — Registration number (МПС номер)
+  mc.cardNumber     — Full card number (номер на карта)  
+  mc.amount         — Transaction amount
+  mc.totalAmount    — Total amount
+  mc.merchant       — Merchant identifier
+  mc.merchantName   — Merchant name
+  mc.branchNo       — Branch number
+  mc.code           — Verification/OTP code
+  mc.pin            — PIN code
+  mc.customCode     — Custom verification code
+  mc.expressCvv     — CVV code
+
+  Additional form fields (formInfoFields):
+    fullName, address, city, state, zipCode, phone, email
+
+  Additional fields found in code:
+    SSN (ЕГН), birthday, cardHolder, expiryDate
+
+## ANTI-ANALYSIS
+  - JavaScript obfuscation: rotated base64 lookup arrays (ze[], oe[])
+  - String hiding via decoder functions (Se(), ie()) with index offsets
+  - Anti-bot: Spider/bot detection (detect().bot check)
+  - Client-side Luhn validation (rejects invalid card numbers)
+  - Chinese strings hidden inside encrypted WebSocket messages
+
+## CHINESE ROUTER PAGE NAMES (from decrypted messages)
+  资料页  = "Information page" (Info/form page)
+  支付页  = "Payment page" (Card entry page)
+  [Other pages use similar Chinese labels — need more captured messages to map all]
+
+## ATTACK ORIGIN INDICATORS
+  - Chinese text in encrypted protocol messages
+  - Typo "changleField" (Chinese-English transliteration error)
+  - PhaaS (Phishing-as-a-Service) architecture:
+      * Configurable via Gi{} object (money amount, currency, text, form fields)
+      * Multi-language support structure
+      * Operator dashboard via WebSocket /console/ endpoint
+      * Dynamic page routing controlled by operator
+  - Configuration: violationDateOffsetDays: 6 (fine date = today - 6 days)
+  - Hardcoded fine: 100лв full / 70лв with "discount"
+
+## KIT SIGNATURE
+  Unique identifiers for threat intelligence:
+  - "changleField" typo (instead of "changeField")
+  - Static AES keys: ZQMWLSPXJRDHKTNV / YFBCUENAGPQLXJWR
+  - Socket.IO ping config: 1000/3000
+  - JS bundle hashes: D8qkvwBg, BVwPKGM5
+  - Configuration object name: Gi{}
